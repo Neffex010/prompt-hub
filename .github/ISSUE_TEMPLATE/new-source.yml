@@ -1,0 +1,78 @@
+name: Proponer una fuente
+description: Sugiere un repositorio, API o dataset de prompts para integrar.
+title: "[Fuente]: "
+labels:
+  - source-request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de proponer, ten en cuenta:
+        - Preferimos fuentes con licencia permisiva (MIT, CC0, Apache-2.0).
+        - La integración debe funcionar sin backend o mediante un snapshot en build.
+        - Enlazamos contenido GPL-3.0, no lo copiamos.
+
+  - type: input
+    id: name
+    attributes:
+      label: Nombre de la fuente
+      placeholder: danielmiessler/fabric
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL del repositorio o API
+      placeholder: https://github.com/danielmiessler/fabric
+    validations:
+      required: true
+
+  - type: input
+    id: license
+    attributes:
+      label: Licencia
+      placeholder: MIT
+    validations:
+      required: true
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: Formato de los datos
+      options:
+        - Markdown por archivo
+        - JSON
+        - CSV
+        - API HTTP
+        - Dataset (Hugging Face u otro)
+        - Otro
+    validations:
+      required: true
+
+  - type: input
+    id: volume
+    attributes:
+      label: Volumen aproximado
+      description: Número de prompts, tamaño del repo, etc.
+      placeholder: ~265 patrones / 2 MB
+    validations:
+      required: false
+
+  - type: textarea
+    id: value
+    attributes:
+      label: Qué aporta
+      description: ¿Por qué merece la pena frente a lo que ya hay?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Comprobaciones
+      options:
+        - label: La fuente permite redistribución o solo enlace.
+          required: true
+        - label: He comprobado que la URL responde públicamente.
+          required: true

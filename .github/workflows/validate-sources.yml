@@ -1,0 +1,27 @@
+name: Validate sources
+
+on:
+  schedule:
+    # Todos los lunes a las 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Comprobar catálogo remoto
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Verificar fuente
+        run: node scripts/check-sources.mjs

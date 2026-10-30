@@ -1,11 +1,11 @@
 import { PROMPTS_CSV_URL } from './config.js';
 import { parseCSV } from './csv.js';
-import { detectCategory } from './utils.js';
+import { createPromptId, detectCategory } from './utils.js';
 
 /**
  * Carga los prompts desde el repositorio remoto y los normaliza
  * al modelo que consume la UI.
- * @returns {Promise<Array<{id: number, act: string, prompt: string, category: string}>>}
+ * @returns {Promise<Array<{id: string, act: string, prompt: string, category: string}>>}
  */
 export async function fetchPrompts() {
   const response = await fetch(PROMPTS_CSV_URL);
@@ -15,13 +15,26 @@ export async function fetchPrompts() {
   }
 
   const rows = parseCSV(await response.text());
+  const prompts = [];
+  const seen = new Set();
 
-  return rows
-    .map((row, index) => ({
-      id: index,
-      act: row.act?.trim() || 'Sin Título',
-      prompt: row.prompt || '',
-      category: detectCategory(row.act, row.prompt),
-    }))
-    .filter((item) => item.prompt !== '');
+  for (const row of rows) {
+    const act = row.act?.trim() || 'Sin Título';
+    const prompt = row.prompt || '';
+
+    if (!prompt) continue;
+
+    const id = createPromptId(act, prompt);
+    if (seen.has(id)) continue;
+
+    seen.add(id);
+    prompts.push({
+      id,
+      act,
+      prompt,
+      category: detectCategory(act, prompt),
+    });
+  }
+
+  return prompts;
 }

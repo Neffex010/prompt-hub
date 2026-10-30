@@ -4,7 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PROMPT.HUB // Neo-Brutalist Prompt Explorer</title>
+  <meta name="description" content="Explorador neo-brutalista de más de 2.700 prompts open source. Busca, filtra, guarda favoritos, cuenta tokens y comparte prompts configurados por URL.">
+  <meta name="theme-color" content="#FFE600">
+  <link rel="canonical" href="https://neffex010.github.io/prompt-hub/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PROMPT.HUB // Neo-Brutalist Prompt Explorer">
+  <meta property="og:description" content="Explora, configura y comparte prompts open source. Favoritos, historial, contador de tokens y deep links a ChatGPT y Claude.">
+  <meta property="og:url" content="https://neffex010.github.io/prompt-hub/">
+  <meta property="og:image" content="https://neffex010.github.io/prompt-hub/favicon.svg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="PROMPT.HUB // Neo-Brutalist Prompt Explorer">
+  <meta name="twitter:description" content="Explora, configura y comparte prompts open source.">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -47,8 +60,11 @@
           <span class="w-3 h-3 rounded-full bg-brutal-green border border-black inline-block animate-pulse"></span>
           <span id="prompt-count-badge">0 PROMPTS</span>
         </div>
-        <a href="https://github.com/f/prompts.chat" target="_blank" class="bg-brutal-cyan border-2 border-black px-3 py-1 shadow-brutal-sm hover:bg-white transition-colors flex items-center gap-1">
-          <i data-lucide="external-link" class="w-4 h-4"></i> GITHUB API
+        <a href="https://github.com/Neffex010/prompt-hub" target="_blank" rel="noopener noreferrer" class="bg-brutal-cyan border-2 border-black px-3 py-1 shadow-brutal-sm hover:bg-white transition-colors flex items-center gap-1">
+          <i data-lucide="github" class="w-4 h-4"></i> REPO
+        </a>
+        <a href="https://github.com/f/prompts.chat" target="_blank" rel="noopener noreferrer" class="bg-white border-2 border-black px-3 py-1 shadow-brutal-sm hover:bg-brutal-pink hover:text-white transition-colors flex items-center gap-1">
+          <i data-lucide="external-link" class="w-4 h-4"></i> FUENTE
         </a>
       </div>
     </div>
@@ -74,12 +90,16 @@
             type="text"
             id="search-input"
             placeholder="Ej: Linux, Translator, Python..."
-            class="w-full bg-brutal-bg border-2 border-black p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brutal-pink shadow-brutal-sm font-bold placeholder:text-gray-500"
+            aria-label="Buscar prompts"
+            class="w-full bg-brutal-bg border-2 border-black p-3 pr-10 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brutal-pink shadow-brutal-sm font-bold placeholder:text-gray-500"
           >
-          <button id="clear-search" class="hidden absolute right-3 top-3 bg-black text-white p-0.5 rounded hover:bg-brutal-pink">
+          <button id="clear-search" type="button" aria-label="Limpiar búsqueda" class="hidden absolute right-3 top-3 bg-black text-white p-0.5 rounded hover:bg-brutal-pink">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
+        <p class="text-[10px] font-mono font-bold text-gray-600 mb-4">
+          Búsqueda difusa · pulsa <kbd class="bg-black text-white px-1">/</kbd> para enfocar · <kbd class="bg-black text-white px-1">Esc</kbd> para limpiar
+        </p>
 
         <!-- Categorías / Roles populares -->
         <div class="space-y-2">
@@ -91,13 +111,60 @@
             <button class="tag-btn bg-white border-2 border-black text-xs font-mono px-2.5 py-1 font-bold shadow-brutal-sm hover:bg-brutal-pink hover:text-white" data-filter="teach">TUTOR</button>
           </div>
         </div>
+
+        <!-- Filtros por flags -->
+        <div class="space-y-2 mt-4 pt-4 border-t-2 border-dashed border-black">
+          <label class="text-xs font-mono font-bold uppercase tracking-wider block text-gray-700">Mi Selección:</label>
+          <div class="flex flex-wrap gap-1.5" id="flags-container">
+            <button class="flag-btn bg-white text-black border-2 border-black text-[11px] font-mono px-2 py-1 font-bold shadow-brutal-sm hover:bg-brutal-cyan" data-flag="favorites" aria-pressed="false">♥ FAVORITOS</button>
+            <button class="flag-btn bg-white text-black border-2 border-black text-[11px] font-mono px-2 py-1 font-bold shadow-brutal-sm hover:bg-brutal-cyan" data-flag="variables" aria-pressed="false">CON VARIABLES</button>
+            <button class="flag-btn bg-white text-black border-2 border-black text-[11px] font-mono px-2 py-1 font-bold shadow-brutal-sm hover:bg-brutal-cyan" data-flag="recent" aria-pressed="false">RECIENTES</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workspace local -->
+      <div class="bg-white p-5 border-brutal-thick shadow-brutal-lg">
+        <h2 class="text-xl font-black uppercase mb-3 flex items-center gap-2 border-b-2 border-black pb-2">
+          <i data-lucide="archive" class="w-5 h-5"></i> Mi Workspace
+        </h2>
+
+        <div class="grid grid-cols-2 gap-2 text-center font-mono font-bold mb-3">
+          <div class="border-2 border-black bg-brutal-yellow p-2 shadow-brutal-sm">
+            <span id="workspace-favorites" class="text-2xl font-black block leading-none">0</span>
+            <span class="text-[10px] uppercase">Favoritos</span>
+          </div>
+          <div class="border-2 border-black bg-brutal-cyan p-2 shadow-brutal-sm">
+            <span id="workspace-history" class="text-2xl font-black block leading-none">0</span>
+            <span class="text-[10px] uppercase">Recientes</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="export-workspace" type="button" class="btn-brutal bg-brutal-green text-xs px-2 py-1.5 uppercase flex items-center justify-center gap-1">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar
+          </button>
+          <button id="import-workspace" type="button" class="btn-brutal bg-brutal-yellow text-xs px-2 py-1.5 uppercase flex items-center justify-center gap-1">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Importar
+          </button>
+        </div>
+
+        <button id="clear-history" type="button" class="mt-2 w-full border-2 border-black bg-white hover:bg-brutal-pink hover:text-white text-[11px] font-mono font-bold uppercase py-1.5">
+          Borrar historial
+        </button>
+
+        <input type="file" id="import-file" accept="application/json,.json" class="hidden">
+
+        <p class="text-[10px] font-mono text-gray-600 mt-3 leading-relaxed">
+          Favoritos e historial se guardan <strong>solo en este navegador</strong> (localStorage). Exporta el JSON para moverlos.
+        </p>
       </div>
 
       <!-- Playground / Probador en Vivo -->
-      <div class="bg-brutal-cyan p-5 border-brutal-thick shadow-brutal-lg sticky top-28">
+      <div class="bg-brutal-cyan p-5 border-brutal-thick shadow-brutal-lg lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
         <div class="flex justify-between items-center mb-3 border-b-2 border-black pb-2">
           <h2 class="text-xl font-black uppercase flex items-center gap-2">
-            <i data-lucide="sliders" class="w-5 h-5"></i> Probador de Variables
+            <i data-lucide="sliders" class="w-5 h-5"></i> Playground
           </h2>
           <span id="active-prompt-badge" class="bg-black text-white text-xs font-mono px-2 py-0.5 uppercase hidden">
             Activo
@@ -106,7 +173,8 @@
 
         <div id="playground-empty" class="text-center py-8 border-2 border-dashed border-black bg-white/60 p-4">
           <i data-lucide="mouse-pointer-click" class="w-8 h-8 mx-auto mb-2 stroke-[2]"></i>
-          <p class="font-bold text-sm uppercase">Selecciona un prompt para interactuar y editar sus campos</p>
+          <p class="font-bold text-sm uppercase">Selecciona un prompt para editar sus campos</p>
+          <p class="font-mono text-[11px] mt-2">Completa las variables, copia el resultado o compártelo por URL.</p>
         </div>
 
         <div id="playground-active" class="hidden space-y-4">
@@ -118,20 +186,35 @@
           </div>
 
           <div>
-            <label class="text-xs font-mono font-bold uppercase block mb-1">Resultado Final (Ajustado):</label>
+            <label for="pg-output" class="text-xs font-mono font-bold uppercase block mb-1">Resultado Final (editable):</label>
             <textarea
               id="pg-output"
               rows="6"
-              class="w-full bg-white border-2 border-black p-3 font-mono text-xs focus:outline-none shadow-brutal-sm font-semibold"
-              readonly
+              class="w-full bg-white border-2 border-black p-3 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-brutal-pink shadow-brutal-sm font-semibold"
             ></textarea>
           </div>
 
+          <!-- Scorecard rápido -->
+          <div id="pg-stats" class="flex flex-wrap gap-1.5 text-[10px] font-mono font-bold" aria-live="polite"></div>
+
+          <!-- Deep links -->
+          <div class="grid grid-cols-2 gap-2">
+            <a id="pg-chatgpt-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-brutal bg-white py-2 px-2 flex items-center justify-center gap-1 text-[11px] uppercase opacity-50 pointer-events-none">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i> ChatGPT
+            </a>
+            <a id="pg-claude-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-brutal bg-white py-2 px-2 flex items-center justify-center gap-1 text-[11px] uppercase opacity-50 pointer-events-none">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Claude
+            </a>
+          </div>
+
           <div class="flex gap-2">
-            <button id="pg-copy-btn" class="flex-1 btn-brutal bg-brutal-yellow py-2 px-3 flex items-center justify-center gap-2 text-sm uppercase">
-              <i data-lucide="copy" class="w-4 h-4"></i> Copiar Ajustado
+            <button id="pg-copy-btn" type="button" class="flex-1 btn-brutal bg-brutal-yellow py-2 px-3 flex items-center justify-center gap-2 text-sm uppercase">
+              <i data-lucide="copy" class="w-4 h-4"></i> Copiar
             </button>
-            <button id="pg-reset-btn" class="btn-brutal bg-white p-2 flex items-center justify-center" title="Resetear">
+            <button id="pg-share-btn" type="button" class="btn-brutal bg-brutal-green py-2 px-3 flex items-center justify-center gap-2 text-sm uppercase" title="Copiar URL con las variables rellenas">
+              <i data-lucide="share-2" class="w-4 h-4"></i> URL
+            </button>
+            <button id="pg-reset-btn" type="button" class="btn-brutal bg-white p-2 flex items-center justify-center" title="Resetear variables">
               <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
           </div>
@@ -147,7 +230,7 @@
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-3 border-brutal shadow-brutal text-xs font-mono font-bold gap-2">
         <div id="status-text">Cargando repositorio desde GitHub...</div>
         <div class="flex items-center gap-4">
-          <span>ORDEN: <select id="sort-order" class="bg-brutal-bg border border-black px-1 py-0.5 focus:outline-none">
+          <span>ORDEN: <select id="sort-order" aria-label="Ordenar prompts" class="bg-brutal-bg border border-black px-1 py-0.5 focus:outline-none">
             <option value="default">POR DEFECTO</option>
             <option value="az">A-Z</option>
             <option value="length">LONGITUD</option>
@@ -174,8 +257,8 @@
       <div id="no-results" class="hidden bg-brutal-pink text-white border-brutal-thick p-8 text-center shadow-brutal-lg my-6">
         <i data-lucide="alert-octagon" class="w-12 h-12 mx-auto mb-3 stroke-[2.5]"></i>
         <h3 class="text-2xl font-black uppercase">¡Sin Resultados!</h3>
-        <p class="font-mono text-sm mt-2">No se encontraron prompts que coincidan con tu búsqueda.</p>
-        <button id="reset-search-btn" class="mt-4 btn-brutal bg-white text-black px-4 py-2 text-sm uppercase">Restablecer Búsqueda</button>
+        <p class="font-mono text-sm mt-2">No se encontraron prompts que coincidan con tu búsqueda o filtros.</p>
+        <button id="reset-search-btn" type="button" class="mt-4 btn-brutal bg-white text-black px-4 py-2 text-sm uppercase">Restablecer Búsqueda</button>
       </div>
 
     </section>
@@ -186,9 +269,11 @@
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
       <div>
         <p class="font-bold text-sm text-brutal-yellow">PROMPT.HUB // BRUTALIST PROMPT ENGINE</p>
-        <p class="text-gray-400 mt-1">Datos obtenidos directamente desde f/prompts.chat repositorio Open Source.</p>
+        <p class="text-gray-400 mt-1">Catálogo open source de <a class="underline hover:text-brutal-cyan" href="https://github.com/f/prompts.chat" target="_blank" rel="noopener noreferrer">f/prompts.chat</a>. Código bajo licencia MIT.</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 flex-wrap justify-center">
+        <a href="https://github.com/Neffex010/prompt-hub" target="_blank" rel="noopener noreferrer" class="underline hover:text-brutal-yellow">GitHub</a>
+        <a href="https://github.com/Neffex010/prompt-hub/issues" target="_blank" rel="noopener noreferrer" class="underline hover:text-brutal-yellow">Issues</a>
         <span class="bg-brutal-green text-black font-bold px-2 py-1 border border-white">ESTADO: ONLINE</span>
       </div>
     </div>

@@ -1,0 +1,67 @@
+name: Sugerir un prompt
+description: Propón un prompt para el catálogo del proyecto.
+title: "[Prompt]: "
+labels:
+  - prompt-suggestion
+body:
+  - type: markdown
+    attributes:
+      value: |
+        El catálogo actual se carga desde [f/prompts.chat](https://github.com/f/prompts.chat).
+        Esta plantilla sirve para proponer prompts que podamos añadir como catálogo comunitario
+        (o enviar a la fuente original).
+
+  - type: input
+    id: title
+    attributes:
+      label: Título / rol
+      placeholder: Senior Code Reviewer
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt
+      description: Usa `${variable:descripcion}` para las variables editables.
+      placeholder: |
+        Act as a senior code reviewer. Review the following ${language:lenguaje} code and list...
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Categoría
+      options:
+        - Dev / Código
+        - Escritura
+        - Tutor
+        - General
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Fuente original (URL)
+      description: Si el prompt no es tuyo, indica de dónde viene.
+    validations:
+      required: false
+
+  - type: input
+    id: license
+    attributes:
+      label: Licencia del contenido
+      description: Necesitamos poder redistribuirlo. MIT, CC0, CC-BY, etc.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Confirmación
+      options:
+        - label: Tengo derecho a compartir este prompt bajo la licencia indicada.
+          required: true

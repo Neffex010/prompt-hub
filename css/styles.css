@@ -45,6 +45,38 @@ body {
   box-shadow: 8px 8px 0px 0px #000000;
 }
 
+/* Favoritos: el corazón se rellena cuando el prompt está guardado */
+.favorite-btn.is-favorite {
+  background-color: #ff007a;
+  color: #ffffff;
+}
+
+.favorite-btn.is-favorite svg {
+  fill: currentColor;
+}
+
+/* Accesibilidad: foco visible consistente */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #ff007a;
+  outline-offset: 2px;
+}
+
+/* Respeto por usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 12px;

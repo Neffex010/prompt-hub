@@ -1,0 +1,58 @@
+name: Reportar un bug
+description: Algo no funciona como debería en la demo o en el código.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por tomarte el tiempo de reportar. Antes de enviar, revisa que no exista un issue parecido.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del problema
+      description: ¿Qué ocurrió y qué esperabas que ocurriera?
+      placeholder: Al pulsar "Compartir" la URL se copia sin las variables...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: |
+        1. Abrir https://neffex010.github.io/prompt-hub/
+        2. Buscar "translator"
+        3. Pulsar "Probar"
+        4. ...
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Navegador y sistema
+      placeholder: Chrome 130 / Windows 11
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Errores de consola (opcional)
+      description: Pega aquí cualquier error de la pestaña Console.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Comprobaciones
+      options:
+        - label: He comprobado que el problema ocurre también en la demo pública.
+          required: false
+        - label: He buscado issues duplicados.
+          required: true

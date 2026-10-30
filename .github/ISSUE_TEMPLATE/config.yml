@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Demo pública
+    url: https://neffex010.github.io/prompt-hub/
+    about: Prueba la app antes de reportar un problema.
+  - name: Repositorio original del catálogo
+    url: https://github.com/f/prompts.chat
+    about: Para problemas con prompts concretos del catálogo base.
