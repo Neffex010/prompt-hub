@@ -20,6 +20,7 @@ import {
   recordVisit,
 } from './features/history.js';
 import { parseShareHash } from './features/share.js';
+import { registerServiceWorker } from './features/pwa.js';
 import {
   downloadWorkspace,
   importWorkspace,
@@ -352,6 +353,7 @@ function init() {
   initPrompts();
   bindEvents();
   loadPrompts();
+  registerServiceWorker();
 }
 
 if (document.readyState === 'loading') {

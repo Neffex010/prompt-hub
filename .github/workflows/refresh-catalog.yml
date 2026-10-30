@@ -1,0 +1,78 @@
+name: Refresh catalog snapshot
+
+# Regenera `data/prompts.json` desde prompts.chat y abre un PR si el
+# contenido cambió. No publica nada directamente: el deploy solo ocurre
+# cuando el PR se mergea en `main`.
+
+on:
+  schedule:
+    # Todos los lunes a las 07:00 UTC (una hora después de validate-sources)
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-catalog
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Regenerar snapshot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Generar snapshot
+        run: npm run build:catalog
+
+      - name: Ejecutar tests
+        run: npm test
+
+      - name: Abrir PR si el snapshot cambió
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- data/prompts.json; then
+            echo "El snapshot no cambió; no hay PR que abrir."
+            exit 0
+          fi
+
+          count=$(node -p "require('./data/prompts.json').count")
+          branch="chore/refresh-catalog"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "$branch"
+          git add data/prompts.json
+          git commit -m "chore: actualizar snapshot del catálogo (${count} prompts)"
+          git push --force origin "$branch"
+
+          if gh pr view "$branch" >/dev/null 2>&1; then
+            echo "Ya existe un PR abierto para $branch; se actualizó con force push."
+            exit 0
+          fi
+
+          body=$(printf '%s\n' \
+            "Actualización automática de data/prompts.json desde f/prompts.chat." \
+            "" \
+            "- Prompts: **${count}**" \
+            "- Generado: $(node -p "require('./data/prompts.json').generatedAt")" \
+            "" \
+            "Revisa el diff antes de mergear: un cambio de ID en un prompt invalida ese favorito guardado en los navegadores.")
+
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "chore: actualizar snapshot del catálogo (${count} prompts)" \
+            --body "$body"

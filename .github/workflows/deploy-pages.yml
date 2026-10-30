@@ -26,8 +26,12 @@ jobs:
       - name: Copiar archivos públicos a _site
         run: |
           mkdir -p _site
-          cp index.html favicon.svg .nojekyll _site/
-          cp -r css js _site/
+          cp index.html favicon.svg .nojekyll manifest.webmanifest sw.js _site/
+          cp -r css js data icons _site/
+          test -s _site/data/prompts.json
+
+      - name: Comprobar que el service worker referencia todo el shell
+        run: npm test
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v6
