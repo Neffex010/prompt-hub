@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+build/
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Herramientas locales
+.playwright-mcp/
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
